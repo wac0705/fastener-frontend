@@ -13,6 +13,7 @@ export default function Home() {
       return;
     }
 
+    // 根據角色導向不同頁面
     if (role === 'admin') {
       router.push('/manage-accounts');
     } else if (role === 'sales') {
@@ -24,5 +25,9 @@ export default function Home() {
     }
   }, []);
 
-  return <p>導向中...</p>;
+  return (
+    <div className="flex items-center justify-center h-screen text-xl">
+      導向中...
+    </div>
+  );
 }
