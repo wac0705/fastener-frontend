@@ -1,19 +1,28 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Home() {
-  const [inquiry, setInquiry] = useState({ id: 1, materials: [], processes: [], logistics: [] });
-  const [result, setResult] = useState(null);
+  const router = useRouter();
 
-  const handleSubmit = async () => {
-    const res = await fetch('https://fastener-api.zeabur.app/api/estimations', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(inquiry) });
-    setResult(await res.json());
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
 
-  return (
-    <div>
-      <h1>緊固件詢報價系統</h1>
-      <button onClick={handleSubmit}>計算估價</button>
-      {result && <p>總成本: {result.total_cost}, AI建議: {result.ai_suggestions}</p>}
-    </div>
-  );
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    if (role === 'admin') {
+      router.push('/manage-accounts');
+    } else if (role === 'sales') {
+      router.push('/dashboard');
+    } else if (role === 'engineer') {
+      router.push('/estimation');
+    } else {
+      alert('未知角色，請聯絡系統管理員');
+    }
+  }, []);
+
+  return <p>導向中...</p>;
 }
