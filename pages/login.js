@@ -8,26 +8,37 @@ export default function Login() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    try {
-      const res = await fetch('https://fastener-api.zeabur.app/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
+  try {
+    const res = await fetch('https://fastener-api.zeabur.app/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role);
-        router.push('/dashboard');
+    if (res.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role);
+
+      // ✅ 根據角色導向不同頁面
+      if (data.role === 'admin') {
+        router.push('/manage-accounts');
+      } else if (data.role === 'engineer') {
+        router.push('/estimation');
       } else {
-        setError(data.error || '登入失敗');
+        router.push('/dashboard'); // 預設 fallback
       }
-    } catch (err) {
-      setError('伺服器錯誤');
+    } else {
+      setError(data.error || '登入失敗');
     }
-  };
+  } catch (err) {
+    setError('伺服器錯誤');
+  }
+};
+
+  
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
